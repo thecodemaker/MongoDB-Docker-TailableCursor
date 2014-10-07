@@ -13,10 +13,11 @@ sudo docker run --name rs1_srv3 -P -d dev24/mongodb --noprealloc --smallfiles --
 #initialize the replica sets
 #sudo docker inspect rs1_srv1
 
-# "NetworkSettings": {
+#    "Name": "/rs1_srv1",
+#    "NetworkSettings": {
 #        "Bridge": "docker0",
 #        "Gateway": "172.17.42.1",
-#        "IPAddress": "172.17.0.11",
+#        "IPAddress": "172.17.0.2",
 #        "IPPrefixLen": 16,
 #        "PortMapping": null,
 #        "Ports": {
@@ -31,10 +32,11 @@ sudo docker run --name rs1_srv3 -P -d dev24/mongodb --noprealloc --smallfiles --
 
 #sudo docker inspect rs1_srv2
 
-#      "NetworkSettings": {
+#   "Name": "/rs1_srv2",
+#    "NetworkSettings": {
 #        "Bridge": "docker0",
 #        "Gateway": "172.17.42.1",
-#        "IPAddress": "172.17.0.12",
+#        "IPAddress": "172.17.0.3",
 #        "IPPrefixLen": 16,
 #        "PortMapping": null,
 #        "Ports": {
@@ -49,10 +51,11 @@ sudo docker run --name rs1_srv3 -P -d dev24/mongodb --noprealloc --smallfiles --
 
 #sudo docker inspect rs1_srv3
 
+#    "Name": "/rs1_srv3",
 #    "NetworkSettings": {
 #        "Bridge": "docker0",
 #        "Gateway": "172.17.42.1",
-#        "IPAddress": "172.17.0.13",
+#        "IPAddress": "172.17.0.4",
 #        "IPPrefixLen": 16,
 #        "PortMapping": null,
 #        "Ports": {
@@ -80,9 +83,9 @@ CONTAINER ID        IMAGE                  COMMAND                CREATED       
 
 mongo --port 49153 << 'EOF'
     config = { _id: "rs1", members:[
-              { _id : 0, host : "172.17.0.11:27017" },
-              { _id : 1, host : "172.17.0.12:27017" },
-              { _id : 2, host : "172.17.0.13:27017" }]};
+              { _id : 0, host : "172.17.0.02:27017" },
+              { _id : 1, host : "172.17.0.03:27017" },
+              { _id : 2, host : "172.17.0.04:27017" }]};
     rs.initiate(config)
 EOF
 
@@ -90,53 +93,54 @@ mongo --port 49153 << 'EOF'
     rs.status()
 EOF
 
-#rs1:PRIMARY> rs.status()
+#MongoDB shell version: 2.4.10
+#connecting to: 127.0.0.1:49153/test
 #{
-#        "set" : "rs1",
-#        "date" : ISODate("2014-09-22T15:27:50Z"),
-#        "myState" : 1,
-#        "members" : [
-#                {
-#                        "_id" : 0,
-#                        "name" : "172.17.0.11:27017",
-#                        "health" : 1,
-#                        "state" : 1,
-#                        "stateStr" : "PRIMARY",
-#                        "uptime" : 1310,
-#                        "optime" : Timestamp(1411399633, 1),
-#                        "optimeDate" : ISODate("2014-09-22T15:27:13Z"),
-#                        "self" : true
-#                },
-#                {
-#                        "_id" : 1,
-#                        "name" : "172.17.0.12:27017",
-#                        "health" : 1,
-#                        "state" : 2,
-#                        "stateStr" : "SECONDARY",
-#                        "uptime" : 37,
-#                        "optime" : Timestamp(1411399633, 1),
-#                        "optimeDate" : ISODate("2014-09-22T15:27:13Z"),
-#                        "lastHeartbeat" : ISODate("2014-09-22T15:27:49Z"),
-#                        "lastHeartbeatRecv" : ISODate("2014-09-22T15:27:50Z"),
-#                        "pingMs" : 0,
-#                        "syncingTo" : "172.17.0.11:27017"
-#                },
-#                {
-#                        "_id" : 2,
-#                        "name" : "172.17.0.13:27017",
-#                        "health" : 1,
-#                        "state" : 2,
-#                        "stateStr" : "SECONDARY",
-#                        "uptime" : 15,
-#                        "optime" : Timestamp(1411399633, 1),
-#                        "optimeDate" : ISODate("2014-09-22T15:27:13Z"),
-#                        "lastHeartbeat" : ISODate("2014-09-22T15:27:49Z"),
-#                        "lastHeartbeatRecv" : ISODate("2014-09-22T15:27:49Z"),
-#                        "pingMs" : 0,
-#                        "syncingTo" : "172.17.0.11:27017"
-#                }
-#        ],
-#        "ok" : 1
+#	"set" : "rs1",
+#	"date" : ISODate("2014-10-07T20:05:46Z"),
+#	"myState" : 1,
+#	"members" : [
+#		{
+#			"_id" : 0,
+#			"name" : "172.17.0.02:27017",
+#			"health" : 1,
+#			"state" : 1,
+#			"stateStr" : "PRIMARY",
+#			"uptime" : 1045,
+#			"optime" : Timestamp(1412712313, 1),
+#			"optimeDate" : ISODate("2014-10-07T20:05:13Z"),
+#			"self" : true
+#		},
+#		{
+#			"_id" : 1,
+#			"name" : "172.17.0.03:27017",
+#			"health" : 1,
+#			"state" : 2,
+#			"stateStr" : "SECONDARY",
+#			"uptime" : 33,
+#			"optime" : Timestamp(1412712313, 1),
+#			"optimeDate" : ISODate("2014-10-07T20:05:13Z"),
+#			"lastHeartbeat" : ISODate("2014-10-07T20:05:45Z"),
+#			"lastHeartbeatRecv" : ISODate("2014-10-07T20:05:46Z"),
+#			"pingMs" : 1,
+#			"syncingTo" : "172.17.0.02:27017"
+#		},
+#		{
+#			"_id" : 2,
+#			"name" : "172.17.0.04:27017",
+#			"health" : 1,
+#			"state" : 2,
+#			"stateStr" : "SECONDARY",
+#			"uptime" : 31,
+#			"optime" : Timestamp(1412712313, 1),
+#			"optimeDate" : ISODate("2014-10-07T20:05:13Z"),
+#			"lastHeartbeat" : ISODate("2014-10-07T20:05:45Z"),
+#			"lastHeartbeatRecv" : ISODate("2014-10-07T20:05:45Z"),
+#			"pingMs" : 0,
+#			"syncingTo" : "172.17.0.02:27017"
+#		}
+#	],
+#	"ok" : 1
 #}
 
 #create some config servers
@@ -144,10 +148,11 @@ sudo docker run --name cfg1 -P -d dev24/mongodb --noprealloc --smallfiles --conf
 
 #sudo docker inspect cfg1
 
+#   "Name": "/cfg1",
 #    "NetworkSettings": {
 #        "Bridge": "docker0",
 #        "Gateway": "172.17.42.1",
-#        "IPAddress": "172.17.0.14",
+#        "IPAddress": "172.17.0.5",
 #        "IPPrefixLen": 16,
 #        "PortMapping": null,
 #        "Ports": {
@@ -174,10 +179,11 @@ sudo docker run --name mongos1 -P -d dev24/mongos --configdb 172.17.0.14:27017 -
 
 #sudo docker inspect mongos1
 
-#   "NetworkSettings": {
+#    "Name": "/mongos1",
+#    "NetworkSettings": {
 #        "Bridge": "docker0",
 #        "Gateway": "172.17.42.1",
-#        "IPAddress": "172.17.0.15",
+#        "IPAddress": "172.17.0.6",
 #        "IPPrefixLen": 16,
 #        "PortMapping": null,
 #        "Ports": {
@@ -202,8 +208,8 @@ sudo docker run --name mongos1 -P -d dev24/mongos --configdb 172.17.0.14:27017 -
 #676727c7b9f5        dev24/mongodb:latest   usr/bin/mongod --nop   40 minutes ago      Up 40 minutes       0.0.0.0:49153->27017/tcp   rs1_srv1
 
 
-mongo 172.17.0.15:27017 << 'EOF'
-    sh.addShard("rs1/172.17.0.11:27017")
+mongo 172.17.0.06:27017 << 'EOF'
+    sh.addShard("rs1/172.17.0.02:27017")
     sh.status()
 EOF
 
