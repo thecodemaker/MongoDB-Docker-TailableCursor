@@ -1,5 +1,8 @@
 //http://www.mongodb.org/display/DOCS/Mongo+Wire+Protocol#MongoWireProtocol-OPQUERY
 //http://java.dzone.com/articles/event-streaming-mongodb
+
+
+load("js/validate_document.js");
 /**
  * Tailable means cursor is not closed when the last data is retrieved.
  * Rather, the cursor marks the final object's position.
@@ -37,16 +40,16 @@ function validate_data(lastTimeStamp) {
         if (lastTimeStamp == 0) {
             query = {ts: {$gte: Timestamp(lastTimeStamp, 0)}};
         } else {
-            query = {ts: {$gte: lastTimeStamp}};
+            query = {ts: {$gt: lastTimeStamp}};
         }
-        var cursor = db["oplog.rs"].find(query,projection)
+        var oplogCursor = db["oplog.rs"].find(query,projection)
             .sort(sort)
             .addOption(QUERYOPTION_TAILABLE)
             .addOption(QUERYOPTION_AWAITDATA);
-        while (cursor.hasNext()) {
-            var document = cursor.next();
-            lastTimeStamp = document.ts;
-            printjson(document);
+        while (oplogCursor.hasNext()) {
+            var oplogDocument = oplogCursor.next();
+            lastTimeStamp = oplogDocument.ts;
+            validate_document(oplogDocument);
             threadSleep(WAIT_MILISECONDS);
         }
     }
