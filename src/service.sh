@@ -50,17 +50,16 @@ usage() {
     echo ""
     echo "Commands:"
     echo "    insert-test-data   inserts some data to be used for demo"  #TODO - remove option
-    echo "    validate           validate data"
+    echo "    validate-data      validate data"
     echo ""
 }
 
-start_mongodb_tailable_cursor() {
- //   lastTimeStamp=0
- //   mongo ${mongo.host}:${mongo.port}/${mongo.database} --eval "var lastTimeStamp=${lastTimeStamp}" --quiet ${search_js} 2>&1 | tee ${output_file}
+validate_data() {
+      lastTimeStamp=0
+      mongo "${mongod_host}:${mongo_port}/local" --eval "var lastTimeStamp=${lastTimeStamp}" --quiet ${validate_data_js} 2>&1 | tee ${output_file}
 }
 
 insert_test_data() {
-    echo "DEBUG: insert_test_data; variables: $mongos_host:$mongo_port/$mongo_database, $insert_test_data_js, $output_file"
     mongo "${mongos_host}:${mongo_port}/${mongo_database}" --quiet ${insert_test_data_js} 2>&1 | tee ${output_file}
 }
 
@@ -73,12 +72,16 @@ do_main() {
     global_variables_check
 
     # Check for validity of argument
-    [[ "$1" != "insert-test-data" ]] && [[ "$1" != "validate" ]] &&
+    [[ "$1" != "insert-test-data" ]] && [[ "$1" != "validate-data" ]] &&
     usage &&
     exit
 
     [[ "$1" == "insert-test-data" ]] &&
     insert_test_data &&
+    exit
+
+    [[ "$1" == "validate-data" ]] &&
+    validate_data &&
     exit
 }
 
