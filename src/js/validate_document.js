@@ -57,14 +57,22 @@
  */
 
 
-//TODO - replace this with some pattern
+//TODO - replace this with a json pattern match
 function validate_document_existing_fields(document) {
     if (!document.createdDtm) {
-        print("ERROR: createdDtm property missing for document with id " + document._id);}
+        print("ERROR: createdDtm property missing for document with id " + document._id);
+    }
     if (!document.status || !document.status.code || !document.status.createdDtm) {
         print("ERROR: status property missing for document with id " + document._id);
     }
-    if (!document.statusHistory || !document.statusHistory[0])
+    if (!document.statusHistory || !document.statusHistory[0].code || !document.statusHistory[0].createdDtm) {
+        print("ERROR: status history property missing for document with id " + document._id);
+    }
+}
+
+//TODO - replace this with a rule base verification
+function validate_document_status_transaction(document) {
+    //TODO
 }
 
 function validate_document(oplogDocument) {
@@ -72,7 +80,8 @@ function validate_document(oplogDocument) {
         if (oplogDocument.op == "i") {
             validate_document_existing_fields(oplogDocument.o);
         } else {
-            validate_document_status_transaction(oplogDocument.o2);
+            var document = db.collection.find({_id: oplogDocument.o2._id})
+            validate_document_status_transaction(document);
         }
     }
 }

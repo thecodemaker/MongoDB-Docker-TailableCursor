@@ -17,7 +17,8 @@ global_variables() {
     mongo_port=""
     mongo_database=""
 
-    output_file="../results/$$.output.csv"
+    mongo_output_file="../tmp/$$.output.csv"
+    final_result_file="../results/$$.result.html"
     insert_test_data_js="js/insert_test_data.js"
     validate_data_js="js/validate_data.js"
 }
@@ -49,18 +50,19 @@ usage() {
     echo "Usage: $0 command"
     echo ""
     echo "Commands:"
-    echo "    insert-test-data   inserts some data to be used for demo"  #TODO - remove option
-    echo "    validate-data      validate data"
+    echo "    insert-test-data   inserts some data to be used for demo"  #TODO - remove option - used just for testing
+    echo "    validate-data      validate data and saves result in a .cvs file"
+    echo "    parse-data         present data as a .html file, errors highlighted in red"
     echo ""
 }
 
 validate_data() {
-      lastTimeStamp=0
-      mongo "${mongod_host}:${mongo_port}/local" --eval "var lastTimeStamp=${lastTimeStamp}" --quiet ${validate_data_js} 2>&1 | tee ${output_file}
+    lastTimeStamp=0
+    mongo "${mongod_host}:${mongo_port}/local" --eval "var lastTimeStamp=${lastTimeStamp}" --quiet ${validate_data_js} 2>&1 | tee ${mongo_output_file}
 }
 
 insert_test_data() {
-    mongo "${mongos_host}:${mongo_port}/${mongo_database}" --quiet ${insert_test_data_js} 2>&1 | tee ${output_file}
+    mongo "${mongos_host}:${mongo_port}/${mongo_database}" --quiet ${insert_test_data_js} 2>&1 | tee ${mongo_output_file}
 }
 
 # Main function
@@ -83,6 +85,7 @@ do_main() {
     [[ "$1" == "validate-data" ]] &&
     validate_data &&
     exit
+
 }
 
 #

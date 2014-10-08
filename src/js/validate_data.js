@@ -36,11 +36,13 @@ function validate_data(lastTimeStamp) {
     var sort = {$natural: 1};
 
     while (true) {
-        var query;
+        var query = {
+            ns: "database.collection"
+        };
         if (lastTimeStamp == 0) {
-            query = {ts: {$gte: Timestamp(lastTimeStamp, 0)}};
+            query.ts = {$gte: Timestamp(lastTimeStamp, 0)};
         } else {
-            query = {ts: {$gt: lastTimeStamp}};
+            query.ts = {$gt: lastTimeStamp};
         }
         var oplogCursor = db["oplog.rs"].find(query,projection)
             .sort(sort)
