@@ -2,13 +2,13 @@
 
 #create docker images
 #execute these lines from command line
-sudo docker build -t dev24/mongodb mongod
-sudo docker build -t dev24/mongos mongos
+sudo docker build -t dev0/mongodb mongod
+sudo docker build -t dev0/mongos mongos
 
 #create a replica set
-sudo docker run --name rs1_srv1 -P -d dev24/mongodb --noprealloc --smallfiles --replSet rs1 --dbpath /data/mongodb --profile=0 --slowms=-1
-sudo docker run --name rs1_srv2 -P -d dev24/mongodb --noprealloc --smallfiles --replSet rs1 --dbpath /data/mongodb --profile=0 --slowms=-1
-sudo docker run --name rs1_srv3 -P -d dev24/mongodb --noprealloc --smallfiles --replSet rs1 --dbpath /data/mongodb --profile=0 --slowms=-1
+sudo docker run --name rs1_srv1 -P -d dev0/mongodb --noprealloc --smallfiles --replSet rs1 --dbpath /data/mongodb --profile=0 --slowms=-1
+sudo docker run --name rs1_srv2 -P -d dev0/mongodb --noprealloc --smallfiles --replSet rs1 --dbpath /data/mongodb --profile=0 --slowms=-1
+sudo docker run --name rs1_srv3 -P -d dev0/mongodb --noprealloc --smallfiles --replSet rs1 --dbpath /data/mongodb --profile=0 --slowms=-1
 
 #initialize the replica sets
 #sudo docker inspect rs1_srv1
@@ -74,9 +74,9 @@ sudo docker run --name rs1_srv3 -P -d dev24/mongodb --noprealloc --smallfiles --
 
 #sudo docker ps
 CONTAINER ID        IMAGE                  COMMAND                CREATED              STATUS              PORTS                      NAMES
-#7ea80412b31a        dev24/mongodb:latest   usr/bin/mongod --nop   About a minute ago   Up About a minute   0.0.0.0:49155->27017/tcp   rs1_srv3
-#613c4f71fa0b        dev24/mongodb:latest   usr/bin/mongod --nop   About a minute ago   Up About a minute   0.0.0.0:49154->27017/tcp   rs1_srv2
-#676727c7b9f5        dev24/mongodb:latest   usr/bin/mongod --nop   2 minutes ago        Up 2 minutes        0.0.0.0:49153->27017/tcp   rs1_srv1
+#7ea80412b31a        dev0/mongodb:latest   usr/bin/mongod --nop   About a minute ago   Up About a minute   0.0.0.0:49155->27017/tcp   rs1_srv3
+#613c4f71fa0b        dev0/mongodb:latest   usr/bin/mongod --nop   About a minute ago   Up About a minute   0.0.0.0:49154->27017/tcp   rs1_srv2
+#676727c7b9f5        dev0/mongodb:latest   usr/bin/mongod --nop   2 minutes ago        Up 2 minutes        0.0.0.0:49153->27017/tcp   rs1_srv1
 
 
 #sudo apt-get install mongodb-clients
@@ -144,7 +144,7 @@ EOF
 #}
 
 #create some config servers
-sudo docker run --name cfg1 -P -d dev24/mongodb --noprealloc --smallfiles --configsvr --dbpath /data/mongodb --port 27017 --profile=0 --slowms=-1
+sudo docker run --name cfg1 -P -d dev0/mongodb --noprealloc --smallfiles --configsvr --dbpath /data/mongodb --port 27017 --profile=0 --slowms=-1
 
 #sudo docker inspect cfg1
 
@@ -169,13 +169,13 @@ sudo docker run --name cfg1 -P -d dev24/mongodb --noprealloc --smallfiles --conf
 #sudo docker ps
 
 #CONTAINER ID        IMAGE                  COMMAND                CREATED              STATUS              PORTS                      NAMES
-#99bbb6790076        dev24/mongodb:latest   usr/bin/mongod --nop   About a minute ago   Up About a minute   0.0.0.0:49156->27017/tcp   cfg1
-#7ea80412b31a        dev24/mongodb:latest   usr/bin/mongod --nop   24 minutes ago       Up 23 minutes       0.0.0.0:49155->27017/tcp   rs1_srv3
-#613c4f71fa0b        dev24/mongodb:latest   usr/bin/mongod --nop   24 minutes ago       Up 24 minutes       0.0.0.0:49154->27017/tcp   rs1_srv2
-#676727c7b9f5        dev24/mongodb:latest   usr/bin/mongod --nop   24 minutes ago       Up 24 minutes       0.0.0.0:49153->27017/tcp   rs1_srv1
+#99bbb6790076        dev0/mongodb:latest   usr/bin/mongod --nop   About a minute ago   Up About a minute   0.0.0.0:49156->27017/tcp   cfg1
+#7ea80412b31a        dev0/mongodb:latest   usr/bin/mongod --nop   24 minutes ago       Up 23 minutes       0.0.0.0:49155->27017/tcp   rs1_srv3
+#613c4f71fa0b        dev0/mongodb:latest   usr/bin/mongod --nop   24 minutes ago       Up 24 minutes       0.0.0.0:49154->27017/tcp   rs1_srv2
+#676727c7b9f5        dev0/mongodb:latest   usr/bin/mongod --nop   24 minutes ago       Up 24 minutes       0.0.0.0:49153->27017/tcp   rs1_srv1
 
 #create mongod router
-sudo docker run --name mongos1 -P -d dev24/mongos --configdb 172.17.0.14:27017 --port 27017
+sudo docker run --name mongos1 -P -d dev0/mongos --configdb 172.17.0.14:27017 --port 27017
 
 #sudo docker inspect mongos1
 
@@ -201,11 +201,11 @@ sudo docker run --name mongos1 -P -d dev24/mongos --configdb 172.17.0.14:27017 -
 #sudo docker ps
 
 #CONTAINER ID        IMAGE                  COMMAND                CREATED             STATUS              PORTS                      NAMES
-#787d0e8e8893        dev24/mongos:latest    usr/bin/mongos --con   14 minutes ago      Up 14 minutes       0.0.0.0:49157->27017/tcp   mongos1
-#99bbb6790076        dev24/mongodb:latest   usr/bin/mongod --nop   17 minutes ago      Up 17 minutes       0.0.0.0:49156->27017/tcp   cfg1
-#7ea80412b31a        dev24/mongodb:latest   usr/bin/mongod --nop   39 minutes ago      Up 39 minutes       0.0.0.0:49155->27017/tcp   rs1_srv3
-#613c4f71fa0b        dev24/mongodb:latest   usr/bin/mongod --nop   39 minutes ago      Up 39 minutes       0.0.0.0:49154->27017/tcp   rs1_srv2
-#676727c7b9f5        dev24/mongodb:latest   usr/bin/mongod --nop   40 minutes ago      Up 40 minutes       0.0.0.0:49153->27017/tcp   rs1_srv1
+#787d0e8e8893        dev0/mongos:latest    usr/bin/mongos --con   14 minutes ago      Up 14 minutes       0.0.0.0:49157->27017/tcp   mongos1
+#99bbb6790076        dev0/mongodb:latest   usr/bin/mongod --nop   17 minutes ago      Up 17 minutes       0.0.0.0:49156->27017/tcp   cfg1
+#7ea80412b31a        dev0/mongodb:latest   usr/bin/mongod --nop   39 minutes ago      Up 39 minutes       0.0.0.0:49155->27017/tcp   rs1_srv3
+#613c4f71fa0b        dev0/mongodb:latest   usr/bin/mongod --nop   39 minutes ago      Up 39 minutes       0.0.0.0:49154->27017/tcp   rs1_srv2
+#676727c7b9f5        dev0/mongodb:latest   usr/bin/mongod --nop   40 minutes ago      Up 40 minutes       0.0.0.0:49153->27017/tcp   rs1_srv1
 
 
 mongo 172.17.0.06:27017 << 'EOF'
