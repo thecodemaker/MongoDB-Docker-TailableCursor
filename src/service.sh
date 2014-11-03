@@ -58,7 +58,10 @@ usage() {
 
 validate_data() {
     lastTimeStamp=0
-    mongo "${mongod_host}:${mongo_port}/local" --eval "var lastTimeStamp=${lastTimeStamp}" --quiet ${validate_data_js} 2>&1 | tee ${mongo_output_file}
+ #  mongo "${mongod_host}:${mongo_port}/local" --eval "var lastTimeStamp=${lastTimeStamp}" --quiet ${validate_data_js} 2>&1 | tee ${mongo_output_file}
+    mongo "${mongod_host}:${mongo_port}/local" --eval "var lastTimeStamp=${lastTimeStamp}" --quiet ${validate_data_js} 2>&1 | \
+        curl -i -u guest:guest -XPUT -d '{"exchange": "bus", "key": "documents", "deliverymode": 1, "priority": 99, "body": "hahaha"}' \
+         "http://localhost:15672/publish"
 }
 
 insert_test_data() {
